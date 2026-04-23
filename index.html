@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarchin Management — Agrarische Dienstverlening met Modern Machinepark</title>
+<meta name="description" content="Van ploegen en zaaien tot grondverzet en slootonderhoud. Tarchin Management zorgt voor vakmanschap op uw land.">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="icon" type="image/png" href="logo.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { sans: ['Inter', 'sans-serif'] },
+        colors: {
+          ink: '#0a0a0a',
+          card: '#111111',
+          edge: '#222222',
+          muted: '#888888',
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: #0a0a0a;
+    color: #ffffff;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-feature-settings: "cv02","cv03","cv04","cv11";
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* Ambient gradient orbs */
+  .orb {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(110px);
+    pointer-events: none;
+    opacity: .55;
+    will-change: transform;
+  }
+  .orb-emerald { background: radial-gradient(circle, rgba(16,185,129,.28) 0%, transparent 70%); }
+  .orb-lime    { background: radial-gradient(circle, rgba(132,204,22,.20) 0%, transparent 70%); }
+
+  /* Grid background */
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse at 50% 40%, black 10%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 40%, black 10%, transparent 70%);
+  }
+
+  /* Navbar — warm off-white voor contrast met logo */
+  .nav-bar {
+    background: rgba(250, 247, 242, .92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: background .25s ease, backdrop-filter .25s ease, box-shadow .25s ease, border-color .25s ease;
+    border-bottom: 1px solid rgba(0,0,0,.05);
+  }
+  .nav-bar.scrolled {
+    background: rgba(250, 247, 242, .97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom-color: rgba(0,0,0,.08);
+    box-shadow: 0 10px 30px -12px rgba(0,0,0,.25);
+  }
+  .nav-bar a.nav-link { color: #4b5563; }
+  .nav-bar a.nav-link:hover { color: #0f172a; }
+
+  /* Gradient text — emerald → lime */
+  .g-text {
+    background: linear-gradient(90deg, #34d399 0%, #a3e635 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Primary gradient button */
+  .btn-primary {
+    position: relative;
+    background: linear-gradient(135deg, #10b981 0%, #65a30d 100%);
+    color: #fff;
+    font-weight: 600;
+    transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+    box-shadow: 0 10px 30px -10px rgba(16,185,129,.55);
+  }
+  .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.08); box-shadow: 0 18px 40px -12px rgba(16,185,129,.7); }
+  .btn-primary:focus-visible { outline: 2px solid #a3e635; outline-offset: 3px; }
+
+  .btn-outline {
+    color: #e5e5e5;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.02);
+    transition: all .2s ease;
+  }
+  .btn-outline:hover { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.22); }
+  .btn-outline:focus-visible { outline: 2px solid rgba(255,255,255,.5); outline-offset: 3px; }
+
+  /* Card hover glow */
+  .card {
+    background: #111111;
+    border: 1px solid #222222;
+    transition: border-color .3s ease, transform .3s ease, box-shadow .3s ease;
+  }
+  .card:hover {
+    border-color: rgba(52,211,153,.45);
+    transform: translateY(-2px);
+    box-shadow: 0 24px 60px -20px rgba(52,211,153,.35), 0 0 0 1px rgba(52,211,153,.18);
+  }
+
+  /* Big step number */
+  .step-num {
+    font-size: clamp(5rem, 10vw, 8.5rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -.06em;
+    background: linear-gradient(180deg, rgba(52,211,153,.30) 0%, rgba(163,230,53,.06) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Reveal on scroll */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* Form fields */
+  .field {
+    width: 100%;
+    background: #0f0f0f;
+    border: 1px solid #222222;
+    color: #fff;
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    transition: border-color .2s ease, background .2s ease, box-shadow .2s ease;
+  }
+  .field:focus {
+    outline: none;
+    border-color: rgba(52,211,153,.6);
+    background: #121212;
+    box-shadow: 0 0 0 4px rgba(52,211,153,.08);
+  }
+  .field::placeholder { color: #666; }
+  label.fl { font-size: 13px; color: #aaa; font-weight: 500; margin-bottom: 8px; display: block; }
+
+  /* Mobile menu */
+  .mob-menu { display: none; max-height: calc(100vh - 70px); overflow-y: auto; }
+  .mob-menu.open { display: flex; }
+
+  /* Betere tap targets op mobiel */
+  @media (max-width: 640px) {
+    .btn-primary, .btn-outline { min-height: 44px; }
+    .nav-bar .mob-menu a { min-height: 44px; display: flex; align-items: center; }
+  }
+
+  /* Legal sections initially hidden */
+  .legal { display: none; }
+  .legal.open { display: block; }
+
+  /* Thin divider */
+  .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent); }
+
+  /* Selection */
+  ::selection { background: rgba(52,211,153,.35); color: #fff; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body class="bg-ink text-white">
+
+<!-- NAV -->
+<nav id="nav" class="nav-bar fixed top-0 left-0 right-0 z-50">
+  <div class="max-w-7xl mx-auto flex items-center justify-between px-6 md:px-10 py-4">
+    <a href="#home" class="flex items-center no-underline group" aria-label="Tarchin Management">
+      <img src="logo.png" alt="Tarchin Management"
+           class="h-14 sm:h-16 md:h-[72px] w-auto block transition-transform duration-200 group-hover:scale-[1.03]">
+    </a>
+
+    <div class="hidden md:flex items-center gap-8">
+      <a href="#home"      class="nav-link text-[14px] font-medium transition-colors">Home</a>
+      <a href="#diensten"  class="nav-link text-[14px] font-medium transition-colors">Diensten</a>
+      <a href="#werkwijze" class="nav-link text-[14px] font-medium transition-colors">Werkwijze</a>
+      <a href="#reviews"   class="nav-link text-[14px] font-medium transition-colors">Reviews</a>
+    </div>
+
+    <a href="#contact" class="hidden md:inline-flex btn-primary items-center gap-2 px-5 py-2.5 rounded-full text-[14px]">
+      Neem Contact Op
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+    </a>
+
+    <button id="hamBtn" aria-label="Menu" class="md:hidden flex flex-col gap-[5px] p-2">
+      <span class="block w-[22px] h-[2px] bg-slate-800 rounded transition-transform"></span>
+      <span class="block w-[22px] h-[2px] bg-slate-800 rounded transition-opacity"></span>
+      <span class="block w-[22px] h-[2px] bg-slate-800 rounded transition-transform"></span>
+    </button>
+  </div>
+
+  <div id="mobMenu" class="mob-menu md:hidden flex-col gap-1 bg-[#faf7f2]/98 backdrop-blur border-t border-black/5 px-6 py-4">
+    <a href="#home"      class="py-3 text-slate-700 border-b border-black/5">Home</a>
+    <a href="#diensten"  class="py-3 text-slate-700 border-b border-black/5">Diensten</a>
+    <a href="#werkwijze" class="py-3 text-slate-700 border-b border-black/5">Werkwijze</a>
+    <a href="#reviews"   class="py-3 text-slate-700 border-b border-black/5">Reviews</a>
+    <a href="#contact"   class="mt-3 btn-primary flex w-full items-center justify-center gap-2 py-3 rounded-full">
+      Neem Contact Op
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="home" class="relative overflow-hidden pt-[130px] sm:pt-[160px] md:pt-[200px] lg:pt-[220px] pb-0">
+  <!-- Agrarische achtergrondfoto -->
+  <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+    <img
+      src="https://images.unsplash.com/photo-1717702576954-c07131c54169?auto=format&fit=crop&w=2400&q=75"
+      alt="Tractor ploegt het veld in gouden uur"
+      class="w-full h-full object-cover"
+      style="object-position: 60% center;"
+      loading="eager"
+      decoding="async">
+    <!-- Overlay voor tekstleesbaarheid -->
+    <div class="absolute inset-0"
+         style="background:
+           linear-gradient(180deg, rgba(10,10,10,.78) 0%, rgba(10,10,10,.45) 30%, rgba(10,10,10,.35) 55%, rgba(10,10,10,.88) 100%);"></div>
+  </div>
+
+  <div class="absolute inset-0 grid-bg"></div>
+  <div class="orb orb-emerald" style="width:620px;height:620px;top:-180px;left:-160px;"></div>
+  <div class="orb orb-lime"    style="width:520px;height:520px;top:40px;right:-160px;"></div>
+
+  <div class="relative max-w-5xl mx-auto px-6 md:px-10 text-center">
+    <div class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[.03] px-4 py-1.5 text-[12px] tracking-wide text-neutral-300">
+      <span class="g-text font-semibold">✦</span>
+      <span>Modern vakmanschap in agrarische dienstverlening</span>
+    </div>
+
+    <h1 class="mt-8 md:mt-10 font-semibold tracking-[-.035em] sm:tracking-[-.045em] leading-[1.08] sm:leading-[1.02] text-white"
+        style="font-size: clamp(36px, 7.2vw, 84px);">
+      Uw partner in<br class="hidden sm:block">
+      <span class="g-text">agrarisch</span> vakmanschap.
+    </h1>
+
+    <p class="mt-6 max-w-2xl mx-auto text-[17px] md:text-[18px] leading-relaxed text-neutral-400">
+      Van ploegen en zaaien tot grondverzet en slootonderhoud — wij nemen het zware werk
+      uit handen met een modern machinepark en eerlijke afspraken.
+    </p>
+
+    <div class="mt-10 flex flex-col sm:flex-row sm:items-center justify-center gap-3 max-w-xs sm:max-w-none mx-auto">
+      <a href="#contact" class="btn-primary inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-[15px] w-full sm:w-auto">
+        Afspraak inplannen
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+      </a>
+      <a href="#werkwijze" class="btn-outline inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-[15px] w-full sm:w-auto">
+        Hoe wij werken
+      </a>
+    </div>
+  </div>
+
+  <!-- Divider + Stats (symmetric padding above/below) -->
+  <div class="relative mt-16 sm:mt-20 md:mt-28 lg:mt-32">
+    <div class="divider max-w-6xl mx-auto"></div>
+    <div class="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-16 grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-10 md:gap-14">
+      <div class="text-center">
+        <div class="text-[38px] sm:text-[44px] md:text-[52px] font-semibold tracking-[-.04em] leading-none">500<span class="g-text">+</span></div>
+        <div class="mt-3 text-[11px] sm:text-[12px] uppercase tracking-[.18em] text-neutral-500">Hectares per seizoen</div>
+      </div>
+      <div class="text-center">
+        <div class="text-[38px] sm:text-[44px] md:text-[52px] font-semibold tracking-[-.04em] leading-none">12<span class="g-text">+</span></div>
+        <div class="mt-3 text-[11px] sm:text-[12px] uppercase tracking-[.18em] text-neutral-500">Moderne machines</div>
+      </div>
+      <div class="text-center">
+        <div class="text-[38px] sm:text-[44px] md:text-[52px] font-semibold tracking-[-.04em] leading-none">50<span class="g-text">+</span></div>
+        <div class="mt-3 text-[11px] sm:text-[12px] uppercase tracking-[.18em] text-neutral-500">Vaste opdrachtgevers</div>
+      </div>
+    </div>
+    <div class="divider max-w-6xl mx-auto"></div>
+  </div>
+</section>
+
+<!-- DIENSTEN -->
+<section id="diensten" class="relative py-16 sm:py-20 md:py-24 lg:py-32">
+  <div class="max-w-6xl mx-auto px-6 md:px-10">
+    <div class="text-center mb-12 md:mb-16 reveal">
+      <div class="text-[12px] tracking-[.22em] text-neutral-500 font-semibold uppercase">Wat wij doen</div>
+      <h2 class="mt-4 font-semibold tracking-[-.035em] leading-[1.05] text-white" style="font-size: clamp(28px, 4.5vw, 52px);">
+        Onze Diensten
+      </h2>
+      <p class="mt-4 text-neutral-400 text-[16px] max-w-xl mx-auto">
+        Volledig loonwerk, grondwerk én handel in zaden & knollen voor akkerbouwers, veehouders en tuinders.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <!-- 1 -->
+      <div class="card rounded-2xl p-7 reveal">
+        <div class="w-11 h-11 rounded-xl bg-white/[.04] border border-white/10 flex items-center justify-center mb-5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l4-8h10l4 8"/><path d="M3 12v8h18v-8"/><circle cx="7" cy="17" r="1.5"/><circle cx="17" cy="17" r="1.5"/></svg>
+        </div>
+        <h3 class="text-[18px] font-semibold tracking-tight mb-2">Ploegen & zaaien</h3>
+        <p class="text-[14px] text-neutral-400 leading-relaxed">Precisiebewerking van uw akker met moderne zaaimachines en GPS-sturing.</p>
+      </div>
+
+      <!-- 2 -->
+      <div class="card rounded-2xl p-7 reveal">
+        <div class="w-11 h-11 rounded-xl bg-white/[.04] border border-white/10 flex items-center justify-center mb-5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a3e635" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20"/><path d="M5 20V9l4-3 4 3v11"/><path d="M13 14h6v6"/><path d="M13 9l3-2 3 2"/></svg>
+        </div>
+        <h3 class="text-[18px] font-semibold tracking-tight mb-2">Grondverzet</h3>
+        <p class="text-[14px] text-neutral-400 leading-relaxed">Afgraven, egaliseren en aanleg van percelen. Groot of klein — netjes afgewerkt.</p>
+      </div>
+
+      <!-- 3 -->
+      <div class="card rounded-2xl p-7 reveal">
+        <div class="w-11 h-11 rounded-xl bg-white/[.04] border border-white/10 flex items-center justify-center mb-5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c3-4 6-4 9 0s6 4 9 0"/><path d="M3 18c3-4 6-4 9 0s6 4 9 0"/></svg>
+        </div>
+        <h3 class="text-[18px] font-semibold tracking-tight mb-2">Slootonderhoud</h3>
+        <p class="text-[14px] text-neutral-400 leading-relaxed">Schonen, baggeren en uitdiepen van sloten. Efficiënte afwatering gegarandeerd.</p>
+      </div>
+
+      <!-- 4 -->
+      <div class="card rounded-2xl p-7 reveal">
+        <div class="w-11 h-11 rounded-xl bg-white/[.04] border border-white/10 flex items-center justify-center mb-5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a3e635" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M4 8h16"/><path d="M6 14l6-6 6 6"/><path d="M8 18l4-4 4 4"/></svg>
+        </div>
+        <h3 class="text-[18px] font-semibold tracking-tight mb-2">Oogstwerkzaamheden</h3>
+        <p class="text-[14px] text-neutral-400 leading-relaxed">Maaien, dorsen en oogsten van granen, mais en aardappelen in piekseizoenen.</p>
+      </div>
+
+      <!-- 5 -->
+      <div class="card rounded-2xl p-7 reveal">
+        <div class="w-11 h-11 rounded-xl bg-white/[.04] border border-white/10 flex items-center justify-center mb-5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <h3 class="text-[18px] font-semibold tracking-tight mb-2">Spoed & seizoenswerk</h3>
+        <p class="text-[14px] text-neutral-400 leading-relaxed">In het seizoen ook in het weekend inzetbaar. Snel schakelen als het weer het vraagt.</p>
+      </div>
+
+      <!-- 6 -->
+      <div class="card rounded-2xl p-7 reveal">
+        <div class="w-11 h-11 rounded-xl bg-white/[.04] border border-white/10 flex items-center justify-center mb-5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a3e635" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <h3 class="text-[18px] font-semibold tracking-tight mb-2">Onderhoudscontracten</h3>
+        <p class="text-[14px] text-neutral-400 leading-relaxed">Jaarafspraken voor vaste klanten: één aanspreekpunt, voorspelbare planning.</p>
+      </div>
+
+      <!-- 7 -->
+      <div class="card rounded-2xl p-7 reveal">
+        <div class="w-11 h-11 rounded-xl bg-white/[.04] border border-white/10 flex items-center justify-center mb-5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M12 12c-3.5 0-6-2.5-6-6 3.5 0 6 2.5 6 6z"/><path d="M12 12c3.5 0 6-2.5 6-6-3.5 0-6 2.5-6 6z"/><path d="M7 22h10"/></svg>
+        </div>
+        <h3 class="text-[18px] font-semibold tracking-tight mb-2">Handel in zaden & knollen</h3>
+        <p class="text-[14px] text-neutral-400 leading-relaxed">Levering van pootgoed, zaaizaad en knollen. Vaste kwaliteit, eerlijke prijzen en betrouwbare inkoopkanalen voor akkerbouwers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WERKWIJZE -->
+<section id="werkwijze" class="relative py-16 sm:py-20 md:py-24 lg:py-32 border-t border-white/[.06]">
+  <div class="max-w-6xl mx-auto px-6 md:px-10">
+    <div class="text-center mb-12 md:mb-16 reveal">
+      <div class="text-[12px] tracking-[.22em] text-neutral-500 font-semibold uppercase">Werkwijze</div>
+      <h2 class="mt-4 font-semibold tracking-[-.035em] leading-[1.05] text-white" style="font-size: clamp(28px, 4.5vw, 52px);">
+        Van aanvraag tot <span class="g-text">oplevering</span>
+      </h2>
+      <p class="mt-4 text-neutral-400 text-[16px] max-w-xl mx-auto">
+        Eerlijke offertes, strakke planning en vakmanschap op uw land.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <!-- 01 -->
+      <div class="card relative rounded-2xl p-8 overflow-hidden reveal">
+        <div class="step-num absolute -top-2 -right-2 pointer-events-none select-none">01</div>
+        <div class="relative">
+          <div class="text-[11px] font-semibold tracking-[.16em] text-neutral-500 uppercase mb-3">Stap 1 · Kennismaking</div>
+          <h3 class="text-[22px] font-semibold tracking-tight mb-3">Intake & adviesgesprek</h3>
+          <p class="text-[14px] text-neutral-400 leading-relaxed max-w-sm">
+            We komen langs op het perceel, bekijken de situatie en bespreken wat u nodig heeft.
+            Geen verplichtingen, geen verkooppraat.
+          </p>
+        </div>
+      </div>
+
+      <!-- 02 -->
+      <div class="card relative rounded-2xl p-8 overflow-hidden reveal">
+        <div class="step-num absolute -top-2 -right-2 pointer-events-none select-none">02</div>
+        <div class="relative">
+          <div class="text-[11px] font-semibold tracking-[.16em] text-neutral-500 uppercase mb-3">Stap 2 · Voorstel</div>
+          <h3 class="text-[22px] font-semibold tracking-tight mb-3">Offerte op maat</h3>
+          <p class="text-[14px] text-neutral-400 leading-relaxed max-w-sm">
+            U krijgt een duidelijke prijs per hectare of per uur, met levertijd en planning.
+            Akkoord? Dan gaan we inplannen.
+          </p>
+        </div>
+      </div>
+
+      <!-- 03 -->
+      <div class="card relative rounded-2xl p-8 overflow-hidden reveal">
+        <div class="step-num absolute -top-2 -right-2 pointer-events-none select-none">03</div>
+        <div class="relative">
+          <div class="text-[11px] font-semibold tracking-[.16em] text-neutral-500 uppercase mb-3">Stap 3 · Uitvoering</div>
+          <h3 class="text-[22px] font-semibold tracking-tight mb-3">Uitvoering op locatie</h3>
+          <p class="text-[14px] text-neutral-400 leading-relaxed max-w-sm">
+            Onze machines komen op het afgesproken moment op het perceel.
+            U hoeft niet aanwezig te zijn.
+          </p>
+        </div>
+      </div>
+
+      <!-- 04 -->
+      <div class="card relative rounded-2xl p-8 overflow-hidden reveal">
+        <div class="step-num absolute -top-2 -right-2 pointer-events-none select-none">04</div>
+        <div class="relative">
+          <div class="text-[11px] font-semibold tracking-[.16em] text-neutral-500 uppercase mb-3">Stap 4 · Oplevering</div>
+          <h3 class="text-[22px] font-semibold tracking-tight mb-3">Controle & afronding</h3>
+          <p class="text-[14px] text-neutral-400 leading-relaxed max-w-sm">
+            Na afloop loopt u met ons het werk na. Pas als u tevreden bent, factureren we.
+            Zo simpel is het.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section id="reviews" class="relative py-16 sm:py-20 md:py-24 lg:py-32 border-t border-white/[.06]">
+  <div class="max-w-6xl mx-auto px-6 md:px-10">
+    <div class="text-center mb-12 md:mb-16 reveal">
+      <div class="text-[12px] tracking-[.22em] text-neutral-500 font-semibold uppercase">Reviews</div>
+      <h2 class="mt-4 font-semibold tracking-[-.035em] leading-[1.05] text-white" style="font-size: clamp(28px, 4.5vw, 52px);">
+        Wat klanten zeggen
+      </h2>
+      <p class="mt-4 text-neutral-400 text-[16px] max-w-xl mx-auto">
+        Boeren en tuinders uit de regio die op ons rekenen, seizoen na seizoen.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <!-- Review 1 -->
+      <div class="card rounded-2xl p-7 flex flex-col reveal">
+        <div class="flex items-center gap-1 text-yellow-400 text-[14px] mb-4">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <p class="text-[15px] text-neutral-200 leading-relaxed mb-6">
+          "Netjes op tijd, goed werk geleverd en eerlijke prijs. Al drie seizoenen achter elkaar doen ze mijn ploegwerk."
+        </p>
+        <div class="mt-auto flex items-center gap-3 pt-4 border-t border-white/[.06]">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-lime-500 flex items-center justify-center text-[13px] font-semibold">AZ</div>
+          <div>
+            <div class="text-[14px] font-semibold">Akkerbouw Zwaluwhof</div>
+            <div class="text-[12px] text-neutral-500">Akkerbouw · Flevoland</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review 2 -->
+      <div class="card rounded-2xl p-7 flex flex-col reveal">
+        <div class="flex items-center gap-1 text-yellow-400 text-[14px] mb-4">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <p class="text-[15px] text-neutral-200 leading-relaxed mb-6">
+          "Ze waren flexibel toen het weer tegenzat en schakelden gelijk. Communicatie was kort maar duidelijk."
+        </p>
+        <div class="mt-auto flex items-center gap-3 pt-4 border-t border-white/[.06]">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-lime-500 to-emerald-500 flex items-center justify-center text-[13px] font-semibold">VZ</div>
+          <div>
+            <div class="text-[14px] font-semibold">Maatschap Visser & Zn.</div>
+            <div class="text-[12px] text-neutral-500">Melkveehouderij · Friesland</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review 3 -->
+      <div class="card rounded-2xl p-7 flex flex-col reveal">
+        <div class="flex items-center gap-1 text-yellow-400 text-[14px] mb-4">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <p class="text-[15px] text-neutral-200 leading-relaxed mb-6">
+          "Goede machines, nette mannen. Sloten zijn weer netjes op diepte. Kan ze aanbevelen."
+        </p>
+        <div class="mt-auto flex items-center gap-3 pt-4 border-t border-white/[.06]">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-600 to-green-400 flex items-center justify-center text-[13px] font-semibold">TG</div>
+          <div>
+            <div class="text-[14px] font-semibold">Tuinderij Groenoord</div>
+            <div class="text-[12px] text-neutral-500">Groenteteelt · Zeeland</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="relative py-16 sm:py-20 md:py-24 lg:py-32 border-t border-white/[.06] overflow-hidden">
+  <div class="absolute inset-0"
+       style="background: radial-gradient(ellipse at 50% 50%, rgba(16,185,129,.2) 0%, rgba(132,204,22,.06) 40%, transparent 70%);"></div>
+  <div class="orb orb-emerald" style="width:520px;height:520px;top:-100px;left:10%;"></div>
+  <div class="orb orb-lime"    style="width:480px;height:480px;bottom:-120px;right:10%;"></div>
+
+  <div class="relative max-w-4xl mx-auto px-6 md:px-10 text-center reveal">
+    <h2 class="font-semibold tracking-[-.03em] sm:tracking-[-.04em] leading-[1.1] sm:leading-[1.02] text-white"
+        style="font-size: clamp(32px, 6.5vw, 72px);">
+      Klaar voor het<br class="hidden sm:block">
+      <span class="g-text">nieuwe seizoen?</span>
+    </h2>
+    <p class="mt-6 text-[17px] text-neutral-400 max-w-xl mx-auto">
+      Plan een vrijblijvend gesprek. We komen langs, kijken mee en maken een eerlijke offerte.
+    </p>
+    <div class="mt-10 max-w-xs mx-auto sm:max-w-none">
+      <a href="#contact" class="btn-primary inline-flex w-full sm:w-auto items-center justify-center gap-2 px-8 py-4 rounded-full text-[16px]">
+        Neem Contact Op
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="relative py-16 sm:py-20 md:py-24 lg:py-32 border-t border-white/[.06]">
+  <div class="max-w-4xl mx-auto px-6 md:px-10">
+    <div class="text-center mb-14 reveal">
+      <div class="text-[12px] tracking-[.22em] text-neutral-500 font-semibold uppercase">Contact</div>
+      <h2 class="mt-4 font-semibold tracking-[-.035em] leading-[1.05] text-white" style="font-size: clamp(28px, 4.5vw, 52px);">
+        Plan uw afspraak
+      </h2>
+      <p class="mt-4 text-neutral-400 text-[16px] max-w-xl mx-auto">
+        Vertel ons kort waar u hulp bij nodig heeft. Wij reageren binnen één werkdag.
+      </p>
+    </div>
+
+    <form action="https://formspree.io/f/mdapgbgd" method="POST" class="card rounded-2xl p-6 md:p-10 reveal">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div>
+          <label class="fl" for="f-naam">Naam</label>
+          <input id="f-naam" class="field" type="text" name="naam" placeholder="Uw volledige naam" required>
+        </div>
+        <div>
+          <label class="fl" for="f-mail">E-mail</label>
+          <input id="f-mail" class="field" type="email" name="email" placeholder="naam@bedrijf.nl" required>
+        </div>
+      </div>
+
+      <div class="mt-5">
+        <label class="fl" for="f-ond">Onderwerp</label>
+        <input id="f-ond" class="field" type="text" name="onderwerp" placeholder="Bijv. ploegwerk, grondverzet, slootonderhoud" required>
+      </div>
+
+      <div class="mt-5">
+        <label class="fl" for="f-msg">Bericht</label>
+        <textarea id="f-msg" class="field" name="bericht" rows="5" placeholder="Vertel ons over het perceel, de gewenste werkzaamheden en de periode." required></textarea>
+      </div>
+
+      <div class="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <p class="text-[13px] text-neutral-500 text-center sm:text-left">We reageren binnen 1 werkdag — geen verkooppraat.</p>
+        <button type="submit" class="btn-primary inline-flex w-full sm:w-auto items-center justify-center gap-2 px-7 py-3.5 rounded-full text-[15px]">
+          Verstuur bericht
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-white/[.06] pt-16 pb-10">
+  <div class="max-w-6xl mx-auto px-6 md:px-10">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 mb-12 md:mb-14">
+      <div class="sm:col-span-2 md:col-span-1">
+        <div class="mb-5">
+          <img src="logo.png" alt="Tarchin Management"
+               class="h-16 md:h-20 w-auto block"
+               style="filter: brightness(1.55) contrast(1.08) drop-shadow(0 0 14px rgba(244,196,48,.2)) drop-shadow(0 0 8px rgba(255,255,255,.15));">
+        </div>
+        <p class="text-[13px] text-neutral-500 leading-relaxed max-w-xs">
+          Agrarische dienstverlening met modern machinepark. Voor akkerbouwers, veehouders en tuinders.
+        </p>
+      </div>
+
+      <div>
+        <div class="text-[12px] uppercase tracking-[.16em] text-neutral-600 font-semibold mb-4">Links</div>
+        <ul class="space-y-3">
+          <li><a href="#home"      class="text-[14px] text-neutral-400 hover:text-white transition">Home</a></li>
+          <li><a href="#diensten"  class="text-[14px] text-neutral-400 hover:text-white transition">Diensten</a></li>
+          <li><a href="#werkwijze" class="text-[14px] text-neutral-400 hover:text-white transition">Werkwijze</a></li>
+          <li><a href="#reviews"   class="text-[14px] text-neutral-400 hover:text-white transition">Reviews</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="text-[12px] uppercase tracking-[.16em] text-neutral-600 font-semibold mb-4">Diensten</div>
+        <ul class="space-y-3">
+          <li class="text-[14px] text-neutral-400">Ploegen & zaaien</li>
+          <li class="text-[14px] text-neutral-400">Grondverzet</li>
+          <li class="text-[14px] text-neutral-400">Slootonderhoud</li>
+          <li class="text-[14px] text-neutral-400">Oogstwerkzaamheden</li>
+          <li class="text-[14px] text-neutral-400">Handel in zaden & knollen</li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="text-[12px] uppercase tracking-[.16em] text-neutral-600 font-semibold mb-4">Contact</div>
+        <ul class="space-y-3">
+          <li class="text-[14px] text-neutral-400">tarchin.management@gmail.com</li>
+          <li class="text-[14px] text-neutral-400">KvK 78654321</li>
+          <li><a href="#contact" class="text-[14px] text-white hover:text-emerald-300 transition font-medium">Afspraak inplannen →</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[13px] text-neutral-500">
+      <div>© 2026 Tarchin Management v.o.f. — Alle rechten voorbehouden.</div>
+      <div class="flex items-center gap-6">
+        <a href="#" onclick="openLegal('privacy'); return false;" class="hover:text-white transition">Privacy Policy</a>
+        <a href="#" onclick="openLegal('voorwaarden'); return false;" class="hover:text-white transition">Algemene Voorwaarden</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- PRIVACY POLICY (verborgen) -->
+<section id="privacy" class="legal border-t border-white/[.06] py-20">
+  <div class="max-w-3xl mx-auto px-6 md:px-10">
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-8 gap-4">
+      <div>
+        <div class="text-[12px] tracking-[.22em] text-neutral-500 font-semibold uppercase">Juridisch</div>
+        <h2 class="mt-3 font-semibold tracking-[-.03em] text-white" style="font-size: clamp(28px, 4vw, 44px);">Privacy Policy</h2>
+        <p class="mt-2 text-[14px] text-neutral-500">Laatst bijgewerkt: 15 april 2026</p>
+      </div>
+      <button onclick="closeLegal('privacy')" class="btn-outline self-start px-4 py-2 rounded-full text-[13px] whitespace-nowrap">Sluiten ✕</button>
+    </div>
+
+    <div class="space-y-6 text-[15px] text-neutral-300 leading-relaxed">
+      <div>
+        <h3 class="text-white font-semibold mb-2 text-[17px]">1. Wie zijn wij</h3>
+        <p>Tarchin Management v.o.f. is verantwoordelijk voor de verwerking van persoonsgegevens zoals beschreven in deze Privacy Policy. Tarchin Management v.o.f. is gevestigd in Nederland en ingeschreven bij de Kamer van Koophandel onder nummer 78654321.</p>
+      </div>
+
+      <div>
+        <h3 class="text-white font-semibold mb-2 text-[17px]">2. Welke gegevens verzamelen wij</h3>
+        <p>Wij verwerken uitsluitend de gegevens die u zelf aan ons verstrekt via het contactformulier of tijdens het opdrachtproces: naam, e-mailadres, bedrijfsnaam, telefoonnummer, perceelgegevens en aanvullende informatie over de opdracht.</p>
+      </div>
+
+      <div>
+        <h3 class="text-white font-semibold mb-2 text-[17px]">3. Waarom verzamelen wij deze gegevens</h3>
+        <p>Wij gebruiken uw gegevens om contact op te nemen, een offerte op te stellen, de werkzaamheden uit te voeren en te plannen, en voor administratieve verplichtingen zoals facturatie en belastingaangifte.</p>
+      </div>
+
+      <div>
+        <h3 class="text-white font-semibold mb-2 text-[17px]">4. Hoe lang bewaren wij gegevens</h3>
+        <p>Wij bewaren uw gegevens niet langer dan noodzakelijk. Contactgegevens en opdrachtinformatie bewaren wij voor de duur van de samenwerking en tot 7 jaar na afloop (wettelijke fiscale bewaarplicht).</p>
+      </div>
+
+      <div>
+        <h3 class="text-white font-semibold mb-2 text-[17px]">5. Delen met derden</h3>
+        <p>Wij delen gegevens alleen met partijen die wij nodig hebben voor onze dienstverlening: onderaannemers bij piekwerkzaamheden, boekhouder en betaaldienstverlener. Met deze partijen hebben wij verwerkersovereenkomsten.</p>
+      </div>
+
+      <div>
+        <h3 class="text-white font-semibold mb-2 text-[17px]">6. Uw rechten</h3>
+        <p>U heeft het recht op inzage, correctie of verwijdering van uw persoonsgegevens. Ook heeft u het recht om bezwaar te maken tegen verwerking. Stuur hiervoor een e-mail naar tarchin.management@gmail.com.</p>
+      </div>
+
+      <div>
+        <h3 class="text-white font-semibold mb-2 text-[17px]">7. Cookies</h3>
+        <p>Deze website gebruikt alleen functionele cookies die noodzakelijk zijn voor de werking van de site. Wij plaatsen geen tracking- of marketingcookies zonder uw toestemming.</p>
+      </div>
+
+      <div>
+        <h3 class="text-white font-semibold mb-2 text-[17px]">8. Klachten</h3>
+        <p>Heeft u een klacht over het gebruik van uw gegevens? Neem dan eerst contact met ons op. U heeft ook het recht om een klacht in te dienen bij de Autoriteit Persoonsgegevens (autoriteitpersoonsgegevens.nl).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALGEMENE VOORWAARDEN (verborgen) -->
+<section id="voorwaarden" class="legal border-t border-white/[.06] py-20">
+  <div class="max-w-3xl mx-auto px-6 md:px-10">
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-8 gap-4">
+      <div>
+        <div class="text-[12px] tracking-[.22em] text-neutral-500 font-semibold uppercase">Juridisch</div>
+        <h2 class="mt-3 font-semibold tracking-[-.03em] text-white" style="font-size: clamp(28px, 4vw, 44px);">Algemene Voorwaarden</h2>
+        <p class="mt-2 text-[14px] text-neutral-500">Laatst bijgewerkt: 15 april 2026</p>
+      </div>
+      <button onclick="closeLegal('voorwaarden')" class="btn-outline self-start px-4 py-2 rounded-full text-[13px] whitespace-nowrap">Sluiten ✕</button>
+    </div>
+
+    <div class="space-y-6 text-[15px] text-neutral-300 leading-relaxed">
+      <div>
+        <h3 class="text-white font-semibold mb-2 text-[17px]">Artikel 1 · Definities</h3>
+        <p>In deze algemene voorwaarden wordt verstaan onder: <strong class="text-white">Tarchin Management</strong>: Tarchin Management v.o.f., gevestigd in Nederland, KvK 78654321. <strong class="text-white">Opdrachtgever</strong>: de natuurlijke of rechtspersoon die Tarchin Management opdracht geeft tot het leveren van diensten.</p>
+      </div>
+
+      <div>
+        <h3 class="text-white font-semibold mb-2 text-[17px]">Artikel 2 · Toepasselijkheid</h3>
+        <p>Deze voorwaarden zijn van toepassing op alle offertes, overeenkomsten en leveringen van Tarchin Management, tenzij schriftelijk anders is overeengekomen. Eventuele voorwaarden van de opdrachtgever zijn niet van toepassing.</p>
+      </div>
+
+      <div>
+        <h3 class="text-white font-semibold mb-2 text-[17px]">Artikel 3 · Offertes en prijzen</h3>
+        <p>Offertes zijn 30 dagen geldig tenzij anders vermeld. Prijzen zijn exclusief BTW en gebaseerd op de aangeleverde gegevens van het perceel en de gewenste werkzaamheden. Meerwerk wordt na afloop verrekend tegen vooraf afgesproken uurtarieven.</p>
+      </div>
+
+      <div>
+        <h3 class="text-white font-semibold mb-2 text-[17px]">Artikel 4 · Uitvoering en planning</h3>
+        <p>Tarchin Management streeft naar uitvoering binnen de overeengekomen periode. Weersomstandigheden kunnen de planning beïnvloeden. De opdrachtgever wordt tijdig geïnformeerd bij eventuele verschuivingen.</p>
+      </div>
+
+      <div>
+        <h3 class="text-white font-semibold mb-2 text-[17px]">Artikel 5 · Toegang tot percelen</h3>
+        <p>De opdrachtgever zorgt voor toegankelijkheid van het perceel en wijst eventuele obstakels of leidingen vooraf aan. Schade door niet-gemelde obstakels komt niet voor rekening van Tarchin Management.</p>
+      </div>
+
+      <div>
+        <h3 class="text-white font-semibold mb-2 text-[17px]">Artikel 6 · Betaling</h3>
+        <p>Facturatie geschiedt na oplevering. Betaling dient binnen 14 dagen na factuurdatum te geschieden. Bij overschrijding is de opdrachtgever van rechtswege in verzuim en is wettelijke handelsrente verschuldigd.</p>
+      </div>
+
+      <div>
+        <h3 class="text-white font-semibold mb-2 text-[17px]">Artikel 7 · Aansprakelijkheid</h3>
+        <p>De aansprakelijkheid van Tarchin Management is beperkt tot maximaal het bedrag dat in het betreffende geval door de opdrachtgever is betaald. Tarchin Management is niet aansprakelijk voor indirecte schade, gevolgschade of gederfde winst.</p>
+      </div>
+
+      <div>
+        <h3 class="text-white font-semibold mb-2 text-[17px]">Artikel 8 · Overmacht</h3>
+        <p>Onder overmacht valt onder meer extreem weer, storing aan machines, of onvoorziene belemmeringen op het perceel. In geval van overmacht kan de uitvoering worden opgeschort zonder dat dit leidt tot schadevergoeding.</p>
+      </div>
+
+      <div>
+        <h3 class="text-white font-semibold mb-2 text-[17px]">Artikel 9 · Toepasselijk recht</h3>
+        <p>Op alle overeenkomsten tussen Tarchin Management en opdrachtgever is Nederlands recht van toepassing. Geschillen worden voorgelegd aan de bevoegde rechter in het arrondissement waar Tarchin Management is gevestigd.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Navbar glass on scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 10);
+  }, { passive: true });
+
+  // Hamburger
+  const hamBtn = document.getElementById('hamBtn');
+  const mobMenu = document.getElementById('mobMenu');
+  hamBtn.addEventListener('click', () => {
+    mobMenu.classList.toggle('open');
+  });
+  mobMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobMenu.classList.remove('open')));
+
+  // Intersection Observer for reveals
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        const siblings = [...e.target.parentElement.querySelectorAll('.reveal')];
+        const idx = siblings.indexOf(e.target);
+        e.target.style.transitionDelay = Math.min(idx, 6) * 70 + 'ms';
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Legal sections open/close
+  function openLegal(id) {
+    document.querySelectorAll('.legal').forEach(s => s.classList.remove('open'));
+    const target = document.getElementById(id);
+    if (!target) return;
+    target.classList.add('open');
+    requestAnimationFrame(() => {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+  function closeLegal(id) {
+    const target = document.getElementById(id);
+    if (target) target.classList.remove('open');
+    document.getElementById('home').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+</script>
+
+</body>
+</html>
